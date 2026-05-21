@@ -1,0 +1,75 @@
+# ============================================
+# Clash 分流配置文件
+# 配合 rules 仓库规则列表使用
+# ============================================
+
+# ---- 代理模式 ----
+mode: rule
+log-level: info
+
+# ---- 出站接口 ----
+interface-name: eth0
+
+# ---- DNS ----
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  fallback:
+    - tls://8.8.8.8:853
+    - tls://1.1.1.1:853
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+# ---- 代理节点 (请替换为你的实际节点) ----
+proxies:
+  - name: '默认代理'
+    type: socks5
+    server: 127.0.0.1
+    port: 1080
+
+# ---- 代理组 ----
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - '默认代理'
+      - DIRECT
+
+# ---- 规则 ----
+rule-providers:
+  direct:
+    type: file
+    behavior: domain
+    path: ./rules/Direct.list
+    format: text
+    interval: 86400
+
+  proxy:
+    type: file
+    behavior: domain
+    path: ./rules/Proxy.list
+    format: text
+    interval: 86400
+
+rules:
+  # 本地规则列表
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,proxy,PROXY
+
+  # 常用补充规则
+  - DOMAIN-SUFFIX,local,DIRECT
+  - DOMAIN-SUFFIX,localhost,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+
+  # 最终匹配
+  - MATCH,DIRECT

@@ -4,11 +4,11 @@
     "sessionStart": [
       {
         "type": "command",
-        "bash": "echo \"Session started: $(date)\" >> logs/session.log",
+        "bash": "echo \"Session started: $(date)\" >> $HOME/.copilot/logs/session.log",
         "powershell": "Add-Content -Path logs/session.log -Value \"Session started: $(Get-Date)\"",
         "cwd": ".",
         "env": { "KEY": "value" },
-        "timeoutSec": 10
+        "timeoutSec": 5
       }
     ]
   }
