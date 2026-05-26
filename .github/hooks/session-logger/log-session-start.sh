@@ -19,8 +19,8 @@ mkdir -p logs/copilot
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 CWD=$(pwd)
 
-# Log session start (use jq for proper JSON encoding)
-jq -Rn --arg timestamp "$TIMESTAMP" --arg cwd "$CWD" '{"timestamp":$timestamp,"event":"sessionStart","cwd":$cwd}' >> logs/copilot/session.log
+# Log session start
+echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"sessionStart\",\"cwd\":\"$CWD\"}" >> logs/copilot/session.log
 
 echo "📝 Session logged"
 exit 0

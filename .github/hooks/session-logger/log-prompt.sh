@@ -9,16 +9,17 @@ if [[ "${SKIP_LOGGING:-}" == "true" ]]; then
   exit 0
 fi
 
-# Read input from Copilot (contains prompt info)
-INPUT=$(cat)
-
 # Create logs directory if it doesn't exist
 mkdir -p logs/copilot
 
 # Extract timestamp
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Log prompt (you can parse INPUT for more details)
-echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"userPromptSubmitted\",\"level\":\"${LOG_LEVEL:-INFO}\"}" >> logs/copilot/prompts.log
+# Log prompt with full content (proper JSON encoding via python3)
+python3 -c "
+import json, sys
+data = {'timestamp': sys.argv[1], 'event': 'userPromptSubmitted', 'level': sys.argv[2], 'prompt': sys.stdin.read()}
+print(json.dumps(data, ensure_ascii=False))
+" "$TIMESTAMP" "${LOG_LEVEL:-INFO}" >> logs/copilot/prompts.log
 
 exit 0
