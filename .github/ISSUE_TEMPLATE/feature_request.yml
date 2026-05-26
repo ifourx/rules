@@ -1,0 +1,38 @@
+name: Feature Request
+description: Suggest a new domain or category of domains to add
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: domains
+    attributes:
+      label: Domains to Add
+      description: List the domains you want to add, one per line.
+      placeholder: |
+        example.com
+        example.org
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: placement
+    attributes:
+      label: Target List
+      description: Which list should these domains go into?
+      options:
+        - Direct.list
+        - Proxy.list
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason
+      description: Why should these domains be added? (e.g., region-specific access, known blocking, performance)
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other relevant information

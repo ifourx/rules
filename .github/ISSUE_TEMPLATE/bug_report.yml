@@ -1,0 +1,47 @@
+name: Bug Report
+description: Report a domain routing issue — a domain that should be proxied but isn't, or vice versa
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: domain
+    attributes:
+      label: Affected Domain
+      description: Which domain is incorrectly routed?
+      placeholder: example.com
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the routing issue. Is the domain incorrectly in Direct.list when it should be in Proxy.list, or vice versa?
+    validations:
+      required: true
+  - type: dropdown
+    id: current-placement
+    attributes:
+      label: Current Placement
+      description: Where is the domain currently listed?
+      options:
+        - Direct.list
+        - Proxy.list
+        - Not listed
+    validations:
+      required: true
+  - type: dropdown
+    id: expected-placement
+    attributes:
+      label: Expected Placement
+      description: Where should the domain be?
+      options:
+        - Direct.list
+        - Proxy.list
+        - Not applicable
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other details (region, proxy tool, etc.)
