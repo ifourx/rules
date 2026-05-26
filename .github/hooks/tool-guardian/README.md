@@ -80,7 +80,7 @@ The hook is configured in `hooks.json` to run on the `preToolUse` event:
 |----------|--------|---------|-------------|
 | `GUARD_MODE` | `warn`, `block` | `block` | `warn` logs threats only; `block` exits non-zero to prevent tool execution |
 | `SKIP_TOOL_GUARD` | `true` | unset | Disable the guardian entirely |
-| `TOOL_GUARD_LOG_DIR` | path | `.github/logs/copilot/tool-guardian` | Directory where guard logs are written |
+| `TOOL_GUARD_LOG_DIR` | path | `logs/copilot/tool-guardian` | Directory where guard logs are written |
 | `TOOL_GUARD_ALLOWLIST` | comma-separated | unset | Patterns to skip (e.g., `git push --force,npm publish`) |
 
 ## How It Works

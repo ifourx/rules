@@ -13,14 +13,15 @@ fi
 INPUT=$(cat)
 
 # Create logs directory if it doesn't exist
-mkdir -p logs/copilot
+SESSION_LOG_DIR="${SESSION_LOG_DIR:-logs/copilot/session-logger}"
+mkdir -p "$SESSION_LOG_DIR"
 
 # Extract timestamp and session info
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 CWD=$(pwd)
 
 # Log session start
-echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"sessionStart\",\"cwd\":\"$CWD\"}" >> logs/copilot/session.log
+echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"sessionStart\",\"cwd\":\"$CWD\"}" >> "$SESSION_LOG_DIR/session.log"
 
 echo "📝 Session logged"
 exit 0
