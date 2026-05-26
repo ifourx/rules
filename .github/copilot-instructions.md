@@ -29,14 +29,14 @@ This repository manages domain-based routing rules for proxy tools.
 
 When making changes to this repository, the following files may need coordinated updates:
 
-| Change | Files to update |
-|--------|----------------|
-| Add/remove a direct domain | `Direct.list`, `Proxy.list` (check for conflict) |
-| Add/remove a proxy domain | `Proxy.list`, `Direct.list` (check for conflict) |
-| Move domain between lists | `Direct.list` (remove), `Proxy.list` (add) or vice versa |
-| Update project documentation | `README.md` |
-| Record notable changes | `CHANGELOG.md` |
-| Update AI agent context | `AGENTS.md`, `.github/copilot-instructions.md` |
+| Change                       | Files to update                                          |
+| ---------------------------- | -------------------------------------------------------- |
+| Add/remove a direct domain   | `Direct.list`, `Proxy.list` (check for conflict)         |
+| Add/remove a proxy domain    | `Proxy.list`, `Direct.list` (check for conflict)         |
+| Move domain between lists    | `Direct.list` (remove), `Proxy.list` (add) or vice versa |
+| Update project documentation | `README.md`                                              |
+| Record notable changes       | `CHANGELOG.md`                                           |
+| Update AI agent context      | `AGENTS.md`, `.github/copilot-instructions.md`           |
 
 ## Test Conventions
 
