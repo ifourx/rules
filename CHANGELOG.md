@@ -10,3 +10,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial AI-ready configuration (AGENTS.md, copilot-instructions.md, issue/PR templates)
+- Technical documentation (docs/ARCHITECTURE.md, docs/INTEGRATION.md, docs/METHODOLOGY.md)

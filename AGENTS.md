@@ -12,6 +12,10 @@ A domain-based network traffic routing rule list for proxy tools (Clash, Surge, 
 ├── Direct.list        # Domains that should connect directly
 ├── Proxy.list         # Domains that should route through proxy
 ├── README.md          # Project documentation
+├── docs/
+│   ├── ARCHITECTURE.md   # Design decisions & data flow
+│   ├── INTEGRATION.md    # Proxy tool configuration guides
+│   └── METHODOLOGY.md    # Domain categorization research process
 └── .github/
     ├── copilot-instructions.md
     ├── ISSUE_TEMPLATE/

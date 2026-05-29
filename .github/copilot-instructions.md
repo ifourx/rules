@@ -1,47 +1,79 @@
 # Copilot Instructions — ifourx/rules
 
+## Overview
+
+This is a **data-only** repository — no code to build, test, or run. It maintains two plain-text rule files for proxy tools (Clash, Surge, Quantumult, etc.) to route network traffic: `Direct.list` (direct connection) and `Proxy.list` (proxy-routed).
+
 ## Rule Format Conventions
 
-This repository manages domain-based routing rules for proxy tools.
-
-- **File format:** Plain text, one rule per line, UTF-8 encoded
-- **Rule syntax:** `DOMAIN-SUFFIX,domain.name`
+- **Syntax:** `DOMAIN-SUFFIX,domain.name` — one rule per line, UTF-8 encoded
 - **Comments:** Lines starting with `#` — use for grouping and notes
 - **Grouping:** Separate logical groups of domains with a blank line and a comment header (e.g., `# Social Media`)
+- **Matching:** `DOMAIN-SUFFIX` matches the domain and all subdomains. Do NOT use `DOMAIN` (exact match) unless explicitly justified.
+- **No paths, protocols, or ports** — only root domains
+- **Alpha-sorted** within each file and group
 
-## Domain Rules
+## Adding or Moving Domains
 
-- Use `DOMAIN-SUFFIX` for all rules (matches the domain and all subdomains)
-- Do NOT use `DOMAIN` (exact match) unless explicitly justified
-- Do NOT add paths, protocols, or ports — only root domains
-- Keep domains alphabetically sorted within each file and group
-- One domain per line — never comma-separate multiple domains on one line
+1. Determine routing: run `dig <domain> +short`, then `curl -o /dev/null -s -w "%{http_code} %{time_total}" <url>` with and without proxy. See `docs/METHODOLOGY.md` for detailed research process.
+2. Add to correct file (`Direct.list` or `Proxy.list`) in alphabetical order within the relevant group.
+3. Check both files — a domain must never appear in both lists.
+4. For moves: remove from one file, add to the other.
+5. If notable, update `CHANGELOG.md` following Keep a Changelog format and SemVer.
 
-## Adding Domains
+## Repository Structure
 
-1. Determine whether the domain should be direct or proxied
-2. Add to the correct file (`Direct.list` or `Proxy.list`)
-3. Place in alphabetical order within the relevant group
-4. Ensure no duplicate entries exist
-5. Verify the domain doesn't already exist in the other list (no overlap)
+```
+Direct.list         # Domains that bypass the proxy
+Proxy.list          # Domains that route through the proxy
+CHANGELOG.md        # Semantic-versioned release log
+AGENTS.md           # AI agent context
+README.md           # End-user quick-start
+docs/
+├── ARCHITECTURE.md # Design decisions & data flow
+├── INTEGRATION.md  # Proxy tool configuration guides
+└── METHODOLOGY.md  # Domain research & categorization process
+.github/
+├── copilot-instructions.md  # This file
+├── agents/                  # Custom Copilot agent definitions
+├── hooks/                   # Session hooks (tool-guardian, session-logger, secrets-scanner)
+├── ISSUE_TEMPLATE/          # Bug report & feature request forms
+└── PULL_REQUEST_TEMPLATE.md # PR checklist
+```
 
-## Maintenance Matrix
+## Key Conventions
 
-When making changes to this repository, the following files may need coordinated updates:
+- **No overlap** — domain in `Direct.list` must not also appear in `Proxy.list` and vice versa
+- **Prefers plain text** over YAML/JSON for zero-tool-dependency editing
+- **Commit messages** use conventional commits (e.g., `feat: add some domains`)
+- **Pull Requests** must include completed checklist from the PR template (format, alphabetical order, no duplicates, CHANGELOG if needed)
+- **Issues** use the bug report template — specify affected domain, current vs. expected placement
 
-| Change                       | Files to update                                          |
-| ---------------------------- | -------------------------------------------------------- |
-| Add/remove a direct domain   | `Direct.list`, `Proxy.list` (check for conflict)         |
-| Add/remove a proxy domain    | `Proxy.list`, `Direct.list` (check for conflict)         |
-| Move domain between lists    | `Direct.list` (remove), `Proxy.list` (add) or vice versa |
-| Update project documentation | `README.md`                                              |
-| Record notable changes       | `CHANGELOG.md`                                           |
-| Update AI agent context      | `AGENTS.md`, `.github/copilot-instructions.md`           |
+## Domain Categorization Principles (from docs/METHODOLOGY.md)
 
-## Test Conventions
+| Principle     | Description                                             |
+| ------------- | ------------------------------------------------------- |
+| Accessibility | Proxy only if domain is inaccessible or degraded direct |
+| Performance   | Proxy if faster through proxy; CDN-heavy stays direct   |
+| Neutrality    | Categorization based purely on reachability, not bias   |
 
-No automated tests exist for this data-only repository. However:
+## Available Custom Agents
 
-- **Manual verification:** After adding/changing domains, verify the domain resolves correctly and confirm its routing behavior with your proxy tool
-- **Duplicate check:** Before submitting, quickly scan both rule files to ensure no domain appears in both lists
-- **Format check:** Ensure each line follows the `DOMAIN-SUFFIX,domain` format
+- **gem-documentation-writer**: Technical documentation, READMEs, API docs
+- **markdown-scribe**: Markdown formatting, editing, and creation
+
+## CI / Hooks
+
+- **No CI workflows** exist currently
+- **Tool Guardian** (`.github/hooks/tool-guardian/`): Pre-hook that blocks dangerous operations (destructive file ops, force pushes to main/master, DB drops). Set `GUARD_MODE=warn` to log without blocking.
+- **Session Logger** (`.github/hooks/session-logger/`): Logs session start/end and prompts
+- **Secrets Scanner** (`.github/hooks/secrets-scanner/`): Scans diffs for secrets on session end
+
+## Design Decisions (from docs/ARCHITECTURE.md)
+
+| Decision                      | Rationale                                                 |
+| ----------------------------- | --------------------------------------------------------- |
+| Plain text over YAML/JSON     | Any editor works; human-readable diffs                    |
+| `DOMAIN-SUFFIX` over `DOMAIN` | One rule covers full domain tree — fewer rules            |
+| Alphabetical ordering         | Prevents duplicates, simplifies review, predictable diffs |
+| Comment-header grouping       | Organises domains by category for maintainability         |
