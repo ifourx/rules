@@ -1,0 +1,200 @@
+######### 锚点 start #######
+# 策略组相关
+# pr: &pr {type: select, proxies: [节点选择, 自动选择, 日本节点, 美国节点, 狮城节点, 香港节点, 台湾节点, 韩国节点, 其它地区, 手动切换, DIRECT]}
+pr: &pr { type: select, proxies: [自动选择, 节点选择, 日本节点, 美国节点, 手动切换, DIRECT] }
+
+#这里是订阅更新和延迟测试相关的
+p:
+  &p {
+    type: http,
+    interval: 3600,
+    health-check: { enable: true, url: "https://www.gstatic.com/generate_204", interval: 300 },
+  }
+######### 锚点 end #######
+
+# url 里填写自己的订阅,名称不能重复, 使用use或者 include-all引用
+proxy-providers:
+  provider1:
+    <<: *p
+    url: ""
+  provider2:
+    <<: *p
+    url: ""
+
+proxies:
+  - name: BWH-US
+    type: hysteria2
+    server: vps.example.com
+    port: "33333"
+    ports: 20000-30000
+    password: foobar.passwd
+    sni: vps.example.com
+
+#### clash通用订阅规则 ####
+proxy-groups:
+  - name: 节点选择
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    type: select
+    proxies:
+      - 自动选择
+      # - 香港节点
+      # - 台湾节点
+      # - 狮城节点
+      - 日本节点
+      - 美国节点
+      # - 韩国节点
+      - 手动切换
+      - DIRECT
+  - name: 手动切换
+    icon: https://testingcf.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png
+    include-all: true
+    type: select
+  - name: 自动选择
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    type: url-test
+    include-all: true
+    interval: 300
+    tolerance: 50
+  - name: 国外媒体
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/ForeignMedia.png
+    type: select
+    proxies:
+      - 自动选择
+      - 手动切换
+  - name: 国内媒体
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/DomesticMedia.png
+    type: select
+    proxies:
+      - DIRECT
+      - 手动切换
+  - name: 全球直连
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png
+    type: select
+    proxies:
+      - DIRECT
+      # - 节点选择
+      # - 自动选择
+  - name: 广告拦截
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 应用净化
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 香港节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png
+    include-all: true
+    filter: (?i)港|HK|hk|Hong Kong|HongKong|hongkong
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 日本节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png
+    include-all: true
+    filter: (?i)日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 美国节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png
+    include-all: true
+    filter: (?i)美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 狮城节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png
+    include-all: true
+    filter: (?i)新加坡|坡|狮城|SG|Singapore
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 台湾节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png
+    include-all: true
+    filter: (?i)台|新北|彰化|TW|Taiwan
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 韩国节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Korea.png
+    include-all: true
+    filter: (?i)KR|Korea|KOR|首尔|韩|韓
+    type: url-test
+    interval: 300
+    tolerance: 50
+  - name: 其它地区
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/mini/Available.png"
+    include-all: true
+    type: select
+    filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|jp|japan|新|sg|singapore|美|us|unitedstates|直连)).*"
+
+rule-anchor:
+  ip: &ip { type: http, interval: 86400, behavior: ipcidr, format: text }
+  domain: &domain { type: http, interval: 86400, behavior: domain, format: text }
+  classical: &classical { type: http, interval: 86400, behavior: classical, format: text }
+
+rule-providers:
+  LocalAreaNetwork:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
+    path: ./ruleset/LocalAreaNetwork.list
+  BanAD:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
+    path: ./ruleset/BanAD.list
+  BanProgramAD:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanProgramAD.list
+    path: ./ruleset/BanProgramAD.list
+  ChinaMedia:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaMedia.list
+    path: ./ruleset/ChinaMedia.list
+  ProxyMedia:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ProxyMedia.list
+    path: ./ruleset/ProxyMedia.list
+  ProxyGFWlist:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ProxyGFWlist.list
+    path: ./ruleset/ProxyGFWlist.list
+  ChinaDomain:
+    <<: *domain
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
+    path: ./ruleset/ChinaDomain.list
+  ChinaCompanyIp:
+    <<: *ip
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaCompanyIp.list
+    path: ./ruleset/ChinaCompanyIp.list
+  Download:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Download.list
+    path: ./ruleset/Download.list
+  MyProxy:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ifourx/rules@main/Proxy.list
+    path: ./ruleset/MyProxy.list
+  MyDirect:
+    <<: *classical
+    url: https://testingcf.jsdelivr.net/gh/ifourx/rules@main/Direct.list
+    path: ./ruleset/MyDirect.list
+
+rules:
+  - "RULE-SET,LocalAreaNetwork,全球直连"
+  - "RULE-SET,BanAD,广告拦截"
+  - "RULE-SET,BanProgramAD,应用净化"
+  - "RULE-SET,MyDirect,全球直连"
+  - "RULE-SET,MyProxy,节点选择"
+  - "RULE-SET,ChinaMedia,国内媒体"
+  - "RULE-SET,ProxyMedia,国外媒体"
+  - "RULE-SET,ProxyGFWlist,节点选择"
+  - "RULE-SET,ChinaDomain,全球直连"
+  - "RULE-SET,ChinaCompanyIp,全球直连"
+  - "RULE-SET,Download,全球直连"
+  - "MATCH,节点选择" # 漏网之鱼
