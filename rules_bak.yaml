@@ -165,11 +165,11 @@ rule-providers:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ProxyGFWlist.list
     path: ./ruleset/ProxyGFWlist.list
   ChinaDomain:
-    <<: *domain
+    <<: *classical
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
     path: ./ruleset/ChinaDomain.list
   ChinaCompanyIp:
-    <<: *ip
+    <<: *classical
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaCompanyIp.list
     path: ./ruleset/ChinaCompanyIp.list
   Download:
